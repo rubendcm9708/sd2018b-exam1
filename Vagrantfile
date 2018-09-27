@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
     ci_server.vm.provision :chef_solo do |chef|
     	chef.install = false
     	chef.cookbooks_path = "cookbooks"
-	##chef.add_recipe = "ci"
+	chef.add_recipe "ci"
   	end
   end
   
