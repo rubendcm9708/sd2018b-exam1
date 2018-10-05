@@ -2,6 +2,7 @@
 	"packages":
 	[
 		"nmap",
-		"tree"
+		"tree",
+		"gem"
 	]			
 }
