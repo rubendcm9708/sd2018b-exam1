@@ -1,0 +1,6 @@
+include_recipe 'ci::install_dependencies'
+include_recipe 'ci::install_py_libraries'
+include_recipe 'ci::config_directories'
+include_recipe 'ci::put_handlers'
+include_recipe 'ci::put_indexer'
+include_recipe 'ci::config_ngrok'
