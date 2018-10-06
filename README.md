@@ -61,7 +61,7 @@ Next, we are going to see how we must provide our Virtual Machines to deploy our
 **Client**  
  * To be provided with an IPv4 Address by the **DHCP Server**, one of the network interfaces must be configured as DHCP type.
  * To interact with the packages repository, the */etc/hosts* file must contains the **Yum Mirror Server** Domain and IP Address.  
- * We don't want the **Client** to search for packages in others YUM Servers, so we must delete all the references in */etc/yum.repos.d/*. Then, we must create a file with the references of our **YUM Mirror Server** that includes *domain* and name.
+ * Also, we don't want the **Client** to search for packages in others YUM Servers, so we must delete all the references in */etc/yum.repos.d/*. Then, we must create a file with the references of our **YUM Mirror Server** that includes *domain* and name.
 
 **DHCP Server**  
  * First, we must install *DHCP* service in our Virtual Machine.
@@ -71,5 +71,14 @@ Next, we are going to see how we must provide our Virtual Machines to deploy our
 **Mirror Server**  
  * First, we need to create a packages repository in our Machine. We can do it with *createrepo*, and yum's plugin called *downloadonly* to retrieve all the packages we want without installing them.
  * After installing these, we run createrepo over a directory (I used */var/repo*).
+ * Now we update all the policies to make public our repository. We can use *semanage* from *policycoreutils-python* utilities.
+ * To allow the **CI Server** to connect using a *ssh* session, we must edit */etc/ssh/sshd.conf* allowing port 22, listen all IP addresses, and allow root logging. Then, restart the *ssh* service to apply changes.
+ * Finally, need to provide all the packages that the **Clients** needs, so we must retrieve a packages list. In this case, I used *packages.json* file from a Github repository. To retrieve, read, and provide the repo with this file, I used a *python* script and *requests*, *os* and *json* libraries.  
 
+**CI Server**  
+ * To start, we need to install *Python3* and *Pip3*. Also, we need to install *Connexion* and *Fabric* python's libraries, I'm going to explain these later.
+ * Then, we need to download and run *Ngrok*, because we need to expose our endpoint private domain to a Github Webhook, by creating a localhost tunnel that provides us a public domain.  
+ * Now, we can deploy our endpoint. With a *indexer.yaml* file, we define the path, input data and response of our endpoint. For all the logic that we explained before, we need a *handler.py* file. In this script I used *request* from *flask*  to read the payload from the webhook request, *requests* to retrieve the *package.json* file from the Pull request, *json* to read the file, and *fabric* to init a *ssh* session and provision the **Yum Mirror Server** with the new packages.
+
+ 
 [1]: images/01_diagrama_despliegue.png
