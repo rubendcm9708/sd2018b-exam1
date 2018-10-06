@@ -2,11 +2,6 @@
 	"packages":
 	[
 		"nmap",
-		"tree",
-		"nano",
-		"unzip",
-		"wget",
-		"httpd",
-		"gem"
+		"tree"
 	]			
 }
