@@ -50,16 +50,26 @@ To start with, we are going to see the four virtual machines in the infrastructu
   * The request contains all the information about the Pull request, that helps the endpoint to retrieve the new list of packages.
   * The endpoint read the list, and by a *SSH* session provides the **YUM Mirror Server** with the new packages.
 
+In the **Figure 1**, we can appreciate the infrastructure used in this project.  
 
+![][1]  
+**Figure 1:** Deployment Diagram
 
+### Machines Provisioning ###  
+Next, we are going to see how we must provide our Virtual Machines to deploy our infrastructure.
 
+**Client**  
+ * To be provided with an IPv4 Address by the **DHCP Server**, one of the network interfaces must be configured as DHCP type.
+ * To interact with the packages repository, the */etc/hosts* file must contains the **Yum Mirror Server** Domain and IP Address.  
+ * We don't want the **Client** to search for packages in others YUM Servers, so we must delete all the references in */etc/yum.repos.d/*. Then, we must create a file with the references of our **YUM Mirror Server** that includes *domain* and name.
 
+**DHCP Server**  
+ * First, we must install *DHCP* service in our Virtual Machine.
+ * To provide IP Addresses that are in our network range, we must edit the */etc/dhcp/dhcpd.conf* file with the desired ip ranges.
+ * Finally, we can enable and start the *DHCP* service.  
 
-
-
-
-
-
-![][1]
+**Mirror Server**  
+ * First, we need to create a packages repository in our Machine. We can do it with *createrepo*, and yum's plugin called *downloadonly* to retrieve all the packages we want without installing them.
+ * After installing these, we run createrepo over a directory (I used */var/repo*).
 
 [1]: images/01_diagrama_despliegue.png
