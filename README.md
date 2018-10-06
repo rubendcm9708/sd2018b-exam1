@@ -46,9 +46,9 @@ To start with, we are going to see the four virtual machines in the infrastructu
 **CI Server:**  
 
 * Should have a *Connexion* application with an Endpoint service designed with RESTful architecture. This endpoint works as follow:
- * When a Pull request with a new list of packages for the **Yum Mirror Server** is made, a Webhook attached to the Github repository will trigger the endpoint with a POST request.
- * The request contains all the information about the Pull request, that helps the endpoint to retrieve the new list of packages.
- * The endpoint read the list, and by a *SSH* session provides the **YUM Mirror Server** with the new packages.
+  * When a Pull request with a new list of packages for the **Yum Mirror Server** is made, a Webhook attached to the Github repository will trigger the endpoint with a POST request.
+  * The request contains all the information about the Pull request, that helps the endpoint to retrieve the new list of packages.
+  * The endpoint read the list, and by a *SSH* session provides the **YUM Mirror Server** with the new packages.
 
 
 
