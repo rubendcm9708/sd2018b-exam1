@@ -5,4 +5,4 @@
 **Email:** rubendcm9708@gmail.com  
 **Subject:** Distributed systems    
 **Professor:** Daniel Barragán C.  
-**Topic:** Infrastructure automatization  
+**Topic:** Continous Integration Infrastructure automation  

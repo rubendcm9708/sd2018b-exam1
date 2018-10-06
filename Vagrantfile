@@ -3,16 +3,6 @@ Vagrant.configure("2") do |config|
   ##All machines works with centos1706_v0.2.0
   config.vm.box = "centos1706_v0.2.0"
 
-  ##Deploy and provision dns server
-  ##config.vm.define "dhcp_server" do |dhcp_server|
-  ##  dhcp_server.vm.network "public_network", bridge: "eno1", ip: "192.168.131.5", netmask: "255.255.255.0"
-  ##  config.vm.provision :chef_solo do |chef|
-  ##  	chef.install = false
-  ##  	chef.cookbooks_path = "cookbooks"
-  ##	chef.add_recipe = "dns"
-  ##	end
-  ##end
-
   ##Deploy and provision dhcp server
   config.vm.define "dhcp_server" do |dhcp_server|
     dhcp_server.vm.network "public_network", bridge: "eno1", ip: "192.168.131.2", netmask: "255.255.255.0"

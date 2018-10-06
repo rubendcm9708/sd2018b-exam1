@@ -11,6 +11,7 @@ pr_packages_json = json.loads(get_data.content)
 packages_query = ' '.join(pr_packages_json["packages"])
 provision_query = 'yum install --downloadonly --downloaddir=/var/repo '+packages_query
 os.system(provision_query)
+os.system('createrepo --update /var/repo')
   EOH
 end
 
