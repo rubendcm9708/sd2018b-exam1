@@ -209,10 +209,82 @@ def updatepackages():
  ### Deployment ###  
  For the deployment of the infrastructure, I used Vagrant for virtualization and Chef for privision automation. In the **figure 2**, we can see the four virtual machines defined in the vagrantfile. Every machine has a cookbook for the provisioning. In the recipes I defined all the steps presented before.  
 ![][2]  
-
-Next, I run *vagrant up* to deploy all my virtual machines. In the **figure 3**, we can see that the four virtual machines are running and provisioned.  
-![][3]
-   
+  
+Next, I executed *vagrant up* to deploy all my virtual machines. In the **figure 3**, we can see that the four virtual machines are running and provisioned.  
+![][3]  
+  
+First, we check if our **Client** has been provisioned with a IP address.  
+![][4]  
+Next, let's check the **Yum Mirror Server**. The next *packages.json*, are the currently packages used by **Clients**.  
+![][5]  
+When the provisioning is finished, all the packages are now in our repo. 
+![][6]  
+Now the **Clients** can see all these packages running *yum list all*  
+![][7]  
+  
+  
+To deploy our *Connexion* app, first, we need to run *ngrok*. Our endpoint is going to in the port 8088 and use *HTTP* protocol.  
+```
+cd /home/vagrant/ngrok
+./ngrok http 8088
+```
+After running these commands, we can see that *ngrok* has provisioned us a public domain.
+![][8]  
+Next, we need to attach a new webhook to our repository. We use the *webhook* manager in the settings tab in our repository. In the **Payload URL** we specify the public domain + endpoint path, and in **Content type** we specify the type of content we want to recieve. 
+![][9]  
+Now, to deploy our endpoint in the port 8088, we execute these commands.  
+```
+export PYTHONPATH=$PYTHONPATH:`pwd`
+export FLASK_ENV=development
+connexion run gm_analytics/swagger/indexer.yaml --debug -p 8088 -H 127.0.0.1
+```
+At this moment, we have our endpoint running and attached to a webhook in our repository. To check if all is working correctly, we are going to edit *packages.json* adding *nano* package.  
+![][10]  
+  
+And we create a pull request.  
+  
+![][11]  
+  
+In the ngrok and connexion consoles, we should see that a POST request has been recieved and processed succesfully.  
+![][12]  
+  
+![][13]  
+  
+Now, we can check if the *nano* package has been downloaded in **Yum Mirror Server** repo.  
+  
+![][14]  
+  
+Finally, we can see the *nano* package when we execut *yum list all*  
+  
+![][15]  
+  
+### Problems and Issues ###  
+Thoughout all the project, I found many several problems and issues. 
+ * First, sometimes when I executed *vagrant up*, my **Client** could be provisioned by another student's **DHCP Server**. To solve this, I should ask them to turn off temporarily their **DHCP Server**.  
+ * Second, I tried to use *knife solo* to provision my **Yum Mirror Server** with the packages. I had many problems with libraries and permissions, and in the end, I gave up and tried another solution.  
+ * Third, when all the packages were downloaded in the repo, my **Client** couldn't see the new packages. I solved this running *yum clean all* and *yum update*.
+ * Finnaly, It was hard to read the payload (json file) that the webhook deliver to the endpoint. With the help of the professor and the students, it was possible to figure it out.  
+  
+### References ###  
+* https://docs.chef.io/  
+* https://github.com/ICESI/ds-vagrant/tree/master/centos7/05_chef_load_balancer_example  
+* https://developer.github.com/v3/guides/building-a-ci-server/  
+* http://www.fabfile.org/  
+* http://flask.pocoo.org/  
+* https://connexion.readthedocs.io/en/latest/  
+  
 [1]: images/01_diagrama_despliegue.png
 [2]: images/vagrantfile.png
 [3]: images/vagrant_up.png
+[4]: images/client_dhcp_provision.png
+[5]: images/json_vagrant_up.png
+[6]: images/mirror_packages_list.png
+[7]: images/packages_list.png  
+[8]: images/ngrok_domain.png  
+[9]: images/webhook.png
+[10]: images/packages_pull_request.PNG
+[11]: images/create_pullrequest.png
+[12]: images/ngrok_request.png
+[13]: images/ci_server_request.png
+[14]: images/mirror_packages_list_2.png
+[15]: images/client_repolist_2.png
