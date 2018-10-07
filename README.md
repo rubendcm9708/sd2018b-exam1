@@ -51,7 +51,7 @@ To start with, we are going to see the four virtual machines in the infrastructu
   * The endpoint read the list, and by a *SSH* session provides the **YUM Mirror Server** with the new packages.
 
 In the **Figure 1**, we can appreciate the infrastructure used in this project.  
-
+  
 ![][1]  
 **Figure 1:** Deployment Diagram
 
@@ -141,9 +141,73 @@ os.system('createrepo --update /var/repo')
  unzip ngrok-stable-linux-amd64.zip
  ```
  * Now, we can deploy our endpoint. With a *indexer.yaml* file, we define the path, input data and response of our endpoint. For all the logic that we explained before, we need a *handler.py* file. In this script I used *request* from *flask*  to read the payload from the webhook request, *requests* to retrieve the *package.json* file from the Pull request, *json* to read the file, and *fabric* to init a *ssh* session and provision the **Yum Mirror Server** with the new packages.
- 
+```
+indexer.yaml:
+swagger: '2.0'
 
+info:
+  title: CI API
+  version: "0.1.0"
 
- ### Evidences ###  
- For the deployment of the infrastructure, I used Vagrant for virtualization and Chef for privision automation. In the **figure 3**, we can see the four 
+paths:
+  /pullrequest/apply:
+    post:
+      x-swagger-router-controller: gm_analytics
+      operationId: handlers.updatepackages
+      summary: Update packages in mirror server.
+      responses:
+        200:
+          description: Successful response.
+          schema:
+            type: object
+            properties:
+              response:
+                type: string
+                description: Pull request status
+
+```
+```
+handlers.yaml:
+import logging
+import requests
+import json
+from flask import request
+from fabric import Connection
+def updatepackages():
+
+    #Post recieved
+    logging.info("Service has been requested")
+
+    #Get post request body and convert to String
+    post_body = request.get_data()
+    body_toString = str(post_body, 'utf-8')
+
+    #load Json file with body and get Pull request id
+    json_file = json.loads(body_toString)
+    pr_id = json_file["pull_request"]["head"]["sha"]
+
+    #Get packages.json URL and get data
+    pr_url = 'https://raw.githubusercontent.com/rubendcm9708/sd2018b-exam1/'+pr_id+'/packages.json'
+    get_data = requests.get(pr_url)
+
+    #Load data to package.json file
+    pr_packages_json = json.loads(get_data.content)
+    
+    #Put packages into a single bash query
+    packages_query = ' '.join(pr_packages_json["packages"])
+    provision_query = 'yum install --downloadonly --downloaddir=/var/repo '+packages_query
+    
+    #Instance connection with yum mirror server and run query
+    mirror_connection = Connection(host='root@192.168.131.3', connect_kwargs={"password":"vagrant"})
+    output = mirror_connection.run(provision_query)
+    mirror_connection.run('createrepo --update /var/repo')
+    logging.debug(output)
+    return{"Status":"Requested"}
+```
+
+ ### Deployment ###  
+ For the deployment of the infrastructure, I used Vagrant for virtualization and Chef for privision automation. In the **figure 2**, we can see the four virtual machines defined in the vagrantfile. Every machine has a cookbook for the provisioning. In the recipes I defined all the steps presented before.  
+![][2]  
+   
 [1]: images/01_diagrama_despliegue.png
+[2]: images/vagrantfile.png
