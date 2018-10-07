@@ -208,18 +208,27 @@ def updatepackages():
 
  ### Deployment ###  
  For the deployment of the infrastructure, I used Vagrant for virtualization and Chef for privision automation. In the **figure 2**, we can see the four virtual machines defined in the vagrantfile. Every machine has a cookbook for the provisioning. In the recipes I defined all the steps presented before.  
+  
 ![][2]  
   
 Next, I executed *vagrant up* to deploy all my virtual machines. In the **figure 3**, we can see that the four virtual machines are running and provisioned.  
+  
 ![][3]  
   
 First, we check if our **Client** has been provisioned with a IP address.  
+  
 ![][4]  
+  
 Next, let's check the **Yum Mirror Server**. The next *packages.json*, are the currently packages used by **Clients**.  
+  
 ![][5]  
-When the provisioning is finished, all the packages are now in our repo. 
+  
+When the provisioning is finished, all the packages are now in our repo.  
+  
 ![][6]  
+  
 Now the **Clients** can see all these packages running *yum list all*  
+  
 ![][7]  
   
   
@@ -228,17 +237,25 @@ To deploy our *Connexion* app, first, we need to run *ngrok*. Our endpoint is go
 cd /home/vagrant/ngrok
 ./ngrok http 8088
 ```
-After running these commands, we can see that *ngrok* has provisioned us a public domain.
+  
+After running these commands, we can see that *ngrok* has provisioned us a public domain.  
+  
 ![][8]  
+  
 Next, we need to attach a new webhook to our repository. We use the *webhook* manager in the settings tab in our repository. In the **Payload URL** we specify the public domain + endpoint path, and in **Content type** we specify the type of content we want to recieve. 
+  
 ![][9]  
+  
 Now, to deploy our endpoint in the port 8088, we execute these commands.  
+  
 ```
 export PYTHONPATH=$PYTHONPATH:`pwd`
 export FLASK_ENV=development
 connexion run gm_analytics/swagger/indexer.yaml --debug -p 8088 -H 127.0.0.1
-```
+```  
+  
 At this moment, we have our endpoint running and attached to a webhook in our repository. To check if all is working correctly, we are going to edit *packages.json* adding *nano* package.  
+  
 ![][10]  
   
 And we create a pull request.  
