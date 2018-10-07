@@ -304,4 +304,4 @@ Thoughout all the project, I found many several problems and issues.
 [12]: images/ngrok_request.png
 [13]: images/ci_server_request.png
 [14]: images/mirror_packages_list_2.png
-[15]: images/client_repolist_2.png
+[15]: images/client_packages_list_2.png
