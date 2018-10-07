@@ -141,8 +141,9 @@ os.system('createrepo --update /var/repo')
  unzip ngrok-stable-linux-amd64.zip
  ```
  * Now, we can deploy our endpoint. With a *indexer.yaml* file, we define the path, input data and response of our endpoint. For all the logic that we explained before, we need a *handler.py* file. In this script I used *request* from *flask*  to read the payload from the webhook request, *requests* to retrieve the *package.json* file from the Pull request, *json* to read the file, and *fabric* to init a *ssh* session and provision the **Yum Mirror Server** with the new packages.
+  
+* indexer.yaml
 ```
-indexer.yaml:
 swagger: '2.0'
 
 info:
@@ -166,8 +167,8 @@ paths:
                 description: Pull request status
 
 ```
+* handlers.py:
 ```
-handlers.yaml:
 import logging
 import requests
 import json
@@ -208,6 +209,10 @@ def updatepackages():
  ### Deployment ###  
  For the deployment of the infrastructure, I used Vagrant for virtualization and Chef for privision automation. In the **figure 2**, we can see the four virtual machines defined in the vagrantfile. Every machine has a cookbook for the provisioning. In the recipes I defined all the steps presented before.  
 ![][2]  
+
+Next, I run *vagrant up* to deploy all my virtual machines. In the **figure 3**, we can see that the four virtual machines are running and provisioned.  
+![][3]
    
 [1]: images/01_diagrama_despliegue.png
 [2]: images/vagrantfile.png
+[3]: images/vagrant_up.png
