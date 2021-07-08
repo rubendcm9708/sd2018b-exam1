@@ -1,0 +1,8 @@
+{
+	"packages":
+	[
+		"nmap",
+		"tree",
+		"nano"
+	]			
+}
